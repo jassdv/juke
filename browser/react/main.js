@@ -2,6 +2,7 @@
 	import Footer from './footer.js';
 	import Sidebar from './sidebar.js';
 	import Albums from './albums.js';
+	import SingleAlbum from './singleAlbum.js';
 
 	import axios from 'axios';
 	let albumsData;
@@ -68,24 +69,37 @@
 		{
 			super();
 			this.state={
-				albums: []
+				albums: [],
+				selectedAlbum: {}
 			}
+
+			this.handleClick = this.handleClick.bind(this);
 		}
 
 		componentDidMount() {
-		axios.get('/api/albums')
-		  .then(res => { 
-		    return res.data; 
-		  })
-		  .then(albumsFromServer => {
-		  	console.log(albumsFromServer);
+			axios.get('/api/albums')
+			  .then(res => { 
+			    return res.data; 
+			  })
+			  .then(albumsFromServer => {
+			  	console.log(albumsFromServer);
 
-		    albumsFromServer = albumsFromServer.map(album => {
-		      album.imageUrl = `/api/albums/${album.id}/image`;
-		      return album;
-		    });
-		    this.setState({ albums: albumsFromServer });
-		  });
+			    albumsFromServer = albumsFromServer.map(album => {
+			      album.imageUrl = `/api/albums/${album.id}/image`;
+			      return album;
+			    });
+			    this.setState({ albums: albumsFromServer });
+		  	});
+
+		}
+
+		handleClick(album) {
+
+			this.setState({
+				selectedAlbum : album
+			})
+
+			
 
 		}
 
@@ -93,9 +107,12 @@
 		render(){
 			return (
 
+
 				<div id="main">
 				<Sidebar />
-				<Albums albums={this.state.albums} />
+				<Albums albums={this.state.albums} handleClick={this.handleClick}></Albums>
+
+				<SingleAlbum album={this.state.selectedAlbum} />
 				
 				<Footer />
 
